@@ -1,10 +1,11 @@
 package com.integration.ai.generative.service;
 
+import com.integration.ai.generative.dto.response.GenerateResponseLLM;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
+import java.util.NoSuchElementException;
 
 @Service
 public class OllamaService {
@@ -14,27 +15,19 @@ public class OllamaService {
         this.chatModel = chatModel;
     }
 
-    public OllamaApi.ChatResponse chat(OllamaApi.ChatRequest chatRequest) {
-        String prompt = chatRequest.messages().getFirst().content();
-        String contentFromPrompt = chatModel.call(prompt);
+    public GenerateResponseLLM chat(OllamaApi.ChatRequest chatRequest) {
+        var prompt = chatRequest
+                .messages()
+                .stream()
+                .findFirst()
+                .map(OllamaApi.Message::content)
+                .orElseThrow(() -> new NoSuchElementException("Messages cannot be empty"));
 
-        return new OllamaApi.ChatResponse(
+        var contentFromPrompt = chatModel.call(prompt);
+
+        return new GenerateResponseLLM(
                 "llama3.2",
-                Instant.now(),
-                new OllamaApi.Message(
-                        OllamaApi.Message.Role.USER,
-                        contentFromPrompt,
-                        null,
-                        null, null, null
-                ),
-                "stop",
-                true,
-                0L,
-                0L,
-                0,
-                0L,
-                0,
-                0L
+                contentFromPrompt
         );
     }
 }
