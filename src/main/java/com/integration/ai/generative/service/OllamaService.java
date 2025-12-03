@@ -6,8 +6,6 @@ import com.integration.ai.generative.exception.unchecked.EmptyMessageListExcepti
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
-
 @Service
 public class OllamaService {
     private final ChatModel chatModel;
