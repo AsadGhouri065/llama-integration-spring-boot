@@ -1,7 +1,8 @@
 package com.integration.ai.generative.service;
 
 import com.integration.ai.generative.dto.request.ChatRequestLocal;
-import com.integration.ai.generative.dto.response.GenerateResponseLLM;
+import com.integration.ai.generative.dto.response.ChatResponseLocal;
+import com.integration.ai.generative.exception.unchecked.EmptyMessageListException;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Service;
 
@@ -15,17 +16,17 @@ public class OllamaService {
         this.chatModel = chatModel;
     }
 
-    public GenerateResponseLLM chat(ChatRequestLocal chatRequest) {
-        var prompt = chatRequest
+    public ChatResponseLocal chat(ChatRequestLocal chatRequestLocal) {
+        var prompt = chatRequestLocal
                 .messages()
                 .stream()
                 .findFirst()
                 .map(ChatRequestLocal.Message::content)
-                .orElseThrow(() -> new NoSuchElementException("Messages cannot be empty"));
+                .orElseThrow(() -> new EmptyMessageListException("Messages cannot be empty"));
 
         var contentFromPrompt = chatModel.call(prompt);
 
-        return new GenerateResponseLLM(
+        return new ChatResponseLocal(
                 "llama3.2",
                 contentFromPrompt
         );
