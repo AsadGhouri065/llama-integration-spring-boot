@@ -1,5 +1,6 @@
 package com.integration.ai.generative.controller;
 
+import com.integration.ai.generative.dto.request.ChatRequestLocal;
 import com.integration.ai.generative.dto.response.GenerateResponseLLM;
 import com.integration.ai.generative.service.OllamaService;
 import org.springframework.ai.ollama.api.OllamaApi;
@@ -19,7 +20,7 @@ public class OllamaController {
     }
 
     @PostMapping("/chat")
-    public GenerateResponseLLM chat(@RequestBody OllamaApi.ChatRequest chatRequest) {
+    public GenerateResponseLLM chat(@RequestBody ChatRequestLocal chatRequest) {
         return ollamaService.chat(chatRequest);
     }
 }
